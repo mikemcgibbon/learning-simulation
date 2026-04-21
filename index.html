@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learning Simulations</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      background: #fff;
+      border-bottom: 2px solid #e5e7eb;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .tab {
+      padding: 14px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab:hover { color: #333; }
+    .tab.active { color: #15803d; border-bottom-color: #15803d; }
+
+    iframe {
+      display: none;
+      width: 100%;
+      height: calc(100vh - 51px);
+      border: none;
+    }
+    iframe.visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTo('targeted')">Targeted Practice</button>
+    <button class="tab" onclick="switchTo('tat')">Test After Test</button>
+  </div>
+
+  <iframe id="iframe-targeted" class="visible" src="targeted_practice.html"></iframe>
+  <iframe id="iframe-tat" src=""></iframe>
+
+  <script>
+    const tabs = { targeted: 0, tat: 1 };
+    let tatLoaded = false;
+
+    function switchTo(which) {
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', i === tabs[which]);
+      });
+      document.getElementById('iframe-targeted').classList.toggle('visible', which === 'targeted');
+      const tatFrame = document.getElementById('iframe-tat');
+      tatFrame.classList.toggle('visible', which === 'tat');
+
+      // Lazy-load the second simulation on first switch
+      if (which === 'tat' && !tatLoaded) {
+        tatFrame.src = 'test_after_test.html';
+        tatLoaded = true;
+      }
+    }
+  </script>
+</body>
+</html>
