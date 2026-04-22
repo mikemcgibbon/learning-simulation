@@ -1,1 +1,1 @@
-I'm trying to build a bridge between theory and practice. It's surprisingly hard to find models of how improvement happens, especially ones that are interactive. There are theories and terms (interleaving, retrieval, etc), but no sense of how these ideas operate in real life and what the tradeoffs are.
+I am trying to build interactive models that let us explore how students practice and learn. There are theories and terms (interleaving, retrieval, etc), but it's often hard to get a sense of how these ideas operate in real life and what the tradeoffs are.
