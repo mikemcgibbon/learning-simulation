@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Targeted Practice vs. Test After Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #fafaf8;
+      color: #1a1a1a;
+      line-height: 1.8;
+      padding: 32px 20px 80px;
+    }
+    article {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Site logo */
+    .site-header { margin-bottom: 36px; text-align: center; }
+    .site-logo {
+      font-family: 'Lato', sans-serif;
+      font-size: 3rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .site-logo:hover { opacity: 0.85; }
+    .logo-math  { color: #4484ce; }
+    .logo-chops { color: #f9cf00; font-weight: 600; }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 28px;
+    }
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 32px 0 8px;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #555;
+    }
+    p { margin-bottom: 18px; font-size: 1rem; }
+
+    /* Color legend */
+    .legend { margin: 14px 0 22px; display: flex; flex-direction: column; gap: 12px; }
+    .legend-item { display: flex; align-items: flex-start; gap: 14px; font-size: 0.97rem; }
+    .legend-dot {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .legend-item p { margin: 0; }
+
+    /* Color table */
+    .color-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 22px;
+      font-size: 0.97rem;
+    }
+    .color-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      color: #999;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 12px 8px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .color-table th:first-child { width: 44px; }
+    .color-table td {
+      padding: 10px 12px 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    .color-table td:last-child { font-weight: 700; white-space: nowrap; }
+
+    /* Trials block */
+    .trials-block {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 32px 0;
+      font-family: system-ui, sans-serif;
+    }
+    .btn-trials { background: #4484ce; color: #fff; }
+    .trials-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      font-family: system-ui, sans-serif;
+    }
+    .trials-table th {
+      text-align: left;
+      font-size: 0.72rem;
+      color: #999;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 16px 8px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .trials-table td {
+      padding: 10px 16px 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .trials-table td:first-child { font-weight: 600; }
+    .trials-table td:not(:first-child) { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    /* Simulation block */
+    .sim-block {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 32px 0;
+      font-family: system-ui, sans-serif;
+    }
+    .sim-label {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: #aaa; margin-bottom: 14px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      align-items: flex-end; margin-bottom: 14px;
+    }
+    .control-group { display: flex; flex-direction: column; gap: 3px; }
+    .ctrl-label { font-size: 0.68rem; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    input[type=number] {
+      width: 80px; padding: 5px 8px;
+      border: 1px solid #ddd; border-radius: 6px;
+      font-size: 0.85rem; font-family: inherit;
+    }
+    .btn {
+      padding: 6px 15px; border: none; border-radius: 6px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-start { background: #22c55e; color: #fff; }
+    .btn-pause { background: #f59e0b; color: #fff; }
+    .btn-reset { background: #ef4444; color: #fff; }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.35; cursor: default; }
+
+    /* Goal bar */
+    .goal-wrap { margin-bottom: 12px; }
+    .goal-header {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: #666; margin-bottom: 4px;
+    }
+    .goal-track {
+      height: 9px; background: #ebebeb; border-radius: 99px;
+      overflow: hidden;
+    }
+    .goal-fill {
+      height: 100%; background: #4ade80; border-radius: 99px;
+      transition: width 0.12s; min-width: 0;
+    }
+
+    /* Assumptions Q&A */
+    .qa { margin-bottom: 18px; }
+    .qa strong { font-style: italic; }
+    ul.assumptions {
+      margin: 6px 0 0 1.4rem;
+      list-style: disc;
+    }
+    ul.assumptions li { margin-bottom: 6px; }
+
+    /* Stats */
+    .stats {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      font-size: 0.8rem; align-items: center; margin-bottom: 12px;
+    }
+    .stat { display: flex; align-items: center; gap: 4px; }
+    .stat-swatch {
+      width: 11px; height: 11px; border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.18); flex-shrink: 0;
+    }
+    .stat-lbl { color: #777; }
+    .stat-val { font-weight: 700; min-width: 18px; }
+    .stat-div { width: 1px; height: 14px; background: #ddd; }
+
+    /* Victory */
+    .victory {
+      display: none;
+      background: #dcfce7; border: 1.5px solid #22c55e;
+      border-radius: 7px; padding: 9px 14px;
+      font-weight: 600; color: #15803d; font-size: 0.88rem;
+      text-align: center; margin-bottom: 12px;
+    }
+    .victory.show { display: block; }
+
+    /* Dot grid */
+    .dot-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dot-grid-10col {
+      display: grid;
+      grid-template-columns: repeat(10, 32px);
+      gap: 6px;
+      justify-content: center;
+    }
+    .dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid #ccc; background: #f0f0f0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700;
+      transition: background 0.12s, border-color 0.12s;
+      flex-shrink: 0;
+    }
+    .dot[data-state="empty"]  { background: #f0f0f0; border-color: #ccc; }
+    .dot[data-state="yellow"] { background: #fde047; border-color: #ca8a04; }
+    .dot[data-state="red"]    { background: #f87171; border-color: #b91c1c; }
+    .dot[data-state="green"]  { background: #4ade80; border-color: #15803d; }
+    .dot[data-state="check"]  { background: #4ade80; border-color: #15803d; }
+    .dot[data-state="black"]  { background: #374151; border-color: #111827; color: #9ca3af; }
+    .dot[data-state="near"]   { background: #16a34a; border-color: #15803d; color: #fff; }
+
+    /* Sim 3 sliders */
+    .s3-sliders { margin-bottom: 14px; }
+    .s3-slider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 10px; }
+    .s3-slider-group { display: flex; flex-direction: column; gap: 3px; }
+    .s3-slider-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .s3-val { font-size: 0.82rem; font-weight: 700; color: #333; font-family: system-ui, sans-serif; }
+    .s3-pool-info { font-size: 0.78rem; color: #888; font-family: system-ui, sans-serif; margin-top: 6px; }
+    input[type=range] { width: 100%; cursor: pointer; accent-color: #4484ce; }
+    .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; cursor: pointer; inset: 0;
+      background: #ddd; border-radius: 20px; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ""; position: absolute;
+      width: 14px; height: 14px; left: 3px; top: 3px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-track { background: #4484ce; }
+    .toggle-switch input:checked + .toggle-track::before { transform: translateX(16px); }
+
+    @keyframes pulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .dot.active { animation: pulse 0.18s ease; }
+  </style>
+</head>
+<body>
+<div class="site-header">
+  <a href="https://mathchops.com" class="site-logo">
+    <span class="logo-math">math</span><span class="logo-chops">chops</span>
+  </a>
+</div>
+
+<article>
+
+<h1>Visualizing Two Practice Strategies</h1>
+
+<p>We know that scores go up when students acquire important skills. But what is the optimal practice strategy? I've created two simulations, each representing a common approach to skill acquisition. In both, the goal is to "learn" 50 new questions.</p>
+<p>Each <strong>circle</strong> represents a skill in a diverse pool, similar to what students encounter in tests like the SAT. Each <strong>turn</strong> represents an attempt to answer a question related to that skill. The probability of success is based on the color of the circle at that time, starting at 70% for new questions.</p>
+<!-- ═══ SIM 1 ═══ -->
+<div class="sim-block">
+  <div class="sim-label">Simulation 1 — Targeted Practice</div>
+  <div class="controls">
+    <div class="control-group">
+      <span class="ctrl-label">Speed (ms/turn)</span>
+      <input type="number" id="s1-tick" value="80" min="10" max="2000">
+    </div>
+    <button class="btn btn-start" id="s1-start" onclick="s1.start()">Start</button>
+    <button class="btn btn-pause" id="s1-pause" onclick="s1.pause()" disabled>Pause</button>
+    <button class="btn btn-reset" onclick="s1.reset()">Reset</button>
+  </div>
+  <div class="goal-wrap">
+    <div class="goal-header">
+      <span>Questions mastered</span>
+      <span><span id="s1-check-n">0</span> / 50</span>
+    </div>
+    <div class="goal-track"><div class="goal-fill" id="s1-fill" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <span class="stat"><span class="stat-lbl" style="font-weight:700">Turns:</span>&nbsp;<span class="stat-val" id="s1-turns">0</span></span>
+    <span class="stat"><span class="stat-lbl">Success:</span>&nbsp;<span class="stat-val" id="s1-rate">—</span></span>
+    <span class="stat-div"></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f0f0f0;border-color:#ccc"></span><span class="stat-val" id="s1-empty">50</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#fde047;border-color:#ca8a04"></span><span class="stat-val" id="s1-yellow">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f87171;border-color:#b91c1c"></span><span class="stat-val" id="s1-red">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d"></span><span class="stat-val" id="s1-green">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center">✓</span><span class="stat-val" id="s1-check">0</span></span>
+  </div>
+  <div class="victory" id="s1-victory"></div>
+  <div class="dot-grid" id="s1-grid"></div>
+</div>
+
+<p>The probability of success varies depending on the skill's history:</p>
+
+<table class="color-table">
+  <thead>
+    <tr>
+      <th>Colors</th>
+      <th></th>
+      <th>Success Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><div class="legend-dot" style="background:#f0f0f0;border-color:#ccc"></div></td>
+      <td>Has never been tested</td>
+      <td>70%</td>
+    </tr>
+    <tr>
+      <td><div class="legend-dot" style="background:#fde047;border-color:#ca8a04"></div></td>
+      <td>Was incorrect (or red) the previous attempt</td>
+      <td>60%</td>
+    </tr>
+    <tr>
+      <td><div class="legend-dot" style="background:#f87171;border-color:#b91c1c"></div></td>
+      <td>Was incorrect the previous 2+ attempts</td>
+      <td>60%</td>
+    </tr>
+    <tr>
+      <td><div class="legend-dot" style="background:#4ade80;border-color:#15803d"></div></td>
+      <td>Was correct the previous attempt</td>
+      <td>80%</td>
+    </tr>
+    <tr>
+      <td><div class="legend-dot" style="background:#4ade80;border-color:#15803d">✓</div></td>
+      <td>Was correct the previous two attempts</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td><div class="legend-dot" style="background:#374151;border-color:#111827;color:#9ca3af">✕</div></td>
+      <td>Too difficult at this time.</td>
+      <td>0%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The first simulation represents targeted practice. The pool contains no mastered or too-hard questions at the start of the simulation. But most students prefer to take practice tests. These have a mix of questions, some of which have already been mastered, some of which are currently out of reach.</p>
+
+<p>In the second simlution, the goal is still to master 50 questions, but this time the student is not specifically targeting the not-mastered, not-out-of-reach questions. Questions are selected randomly from the full pool, just as they are in a practice test. This particular student begins with 30 green checks and 20 black circles.</p>
+
+<!-- ═══ SIM 2 ═══ -->
+<div class="sim-block">
+  <div class="sim-label">Simulation 2 — Test After Test</div>
+  <div class="controls">
+    <div class="control-group">
+      <span class="ctrl-label">Speed (ms/turn)</span>
+      <input type="number" id="s2-tick" value="80" min="10" max="2000">
+    </div>
+    <button class="btn btn-start" id="s2-start" onclick="s2.start()">Start</button>
+    <button class="btn btn-pause" id="s2-pause" onclick="s2.pause()" disabled>Pause</button>
+    <button class="btn btn-reset" onclick="s2.reset()">Reset</button>
+  </div>
+  <div class="goal-wrap">
+    <div class="goal-header">
+      <span>New Questions Mastered</span>
+      <span><span id="s2-check-n">0</span> / 50</span>
+    </div>
+    <div class="goal-track"><div class="goal-fill" id="s2-fill" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <span class="stat"><span class="stat-lbl" style="font-weight:700">Turns:</span>&nbsp;<span class="stat-val" id="s2-turns">0</span></span>
+    <span class="stat"><span class="stat-lbl">Success:</span>&nbsp;<span class="stat-val" id="s2-rate">—</span></span>
+    <span class="stat-div"></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f0f0f0;border-color:#ccc"></span><span class="stat-val" id="s2-empty">50</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#fde047;border-color:#ca8a04"></span><span class="stat-val" id="s2-yellow">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f87171;border-color:#b91c1c"></span><span class="stat-val" id="s2-red">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d"></span><span class="stat-val" id="s2-green">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center">✓</span><span class="stat-val" id="s2-check">30</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#374151;border-color:#111827"></span><span class="stat-val" id="s2-black">20</span></span>
+  </div>
+  <div class="victory" id="s2-victory"></div>
+  <div class="dot-grid-10col" id="s2-grid"></div>
+</div>
+
+<p>It's painful for me to watch this one. Every pulsing green check and black ✕ is futile. Over time, it becomes harder and harder to find those questions that can still be converted. One forlorn green circle may wait for 80 turns…and that turn still might not be successful. The process also appears to be highly variable: I've seen as many as 3,947 turns and as few as 772.</p>
+
+<div class="trials-block">
+  <div class="sim-label">Monte Carlo — 100 Trials</div>
+  <button class="btn btn-trials" id="trials-btn" onclick="runTrials()">Run 100 Trials</button>
+  <div id="trials-results" style="display:none">
+    <table class="trials-table">
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th>Avg Turns</th>
+          <th>Median</th>
+          <th>Best</th>
+          <th>Worst</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Targeted</td>
+          <td id="t1-mean">—</td>
+          <td id="t1-median">—</td>
+          <td id="t1-min">—</td>
+          <td id="t1-max">—</td>
+        </tr>
+        <tr>
+          <td>Test-after-test</td>
+          <td id="t2-mean">—</td>
+          <td id="t2-median">—</td>
+          <td id="t2-min">—</td>
+          <td id="t2-max">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p>I do think the second simulation reflects the approach of taking "test after test" approach very well. The student is answering more questions and is getting a higher percentage right (often ~75% vs ~65%)...but it doesn't matter, because so few of those questions are targeting skills that will actually affect their scores.</p>
+<p>Meanwhile, the first student is only targeting high-yield questions. There are no black questions, and the green-check questions are never answered. Over time, the practice pool becomes smaller, which speeds up the process.</p>
+<h2>Exploration</h2>
+<p>Use the sliders below to explore how each variable affects the outcome. Pool composition changes (% mastered, % out-of-reach) take effect when you click Reset. Rate and threshold changes take effect immediately.</p>
+
+<!-- ═══ SIM 3 ═══ -->
+<div class="sim-block">
+  <div class="sim-label">Simulation 3 — Sensitivity Explorer</div>
+  <div class="s3-sliders">
+    <div class="s3-slider-grid">
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-pcheck">% mastered at start</label>
+          <span class="s3-val" id="s3-pcheck-val">30%</span>
+        </div>
+        <input type="range" id="s3-pcheck" min="0" max="80" step="5" value="30" oninput="s3SliderChange()">
+      </div>
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-pblack">% out of reach</label>
+          <span class="s3-val" id="s3-pblack-val">20%</span>
+        </div>
+        <input type="range" id="s3-pblack" min="0" max="80" step="5" value="20" oninput="s3SliderChange()">
+      </div>
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-newrate">Gray/new success rate</label>
+          <span class="s3-val" id="s3-newrate-val">70%</span>
+        </div>
+        <input type="range" id="s3-newrate" min="10" max="95" step="5" value="70" oninput="s3SliderChange()">
+      </div>
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-greenrate">Green success rate</label>
+          <span class="s3-val" id="s3-greenrate-val">80%</span>
+        </div>
+        <input type="range" id="s3-greenrate" min="10" max="99" step="5" value="80" oninput="s3SliderChange()">
+      </div>
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-yellowrate">Yellow success rate</label>
+          <span class="s3-val" id="s3-yellowrate-val">60%</span>
+        </div>
+        <input type="range" id="s3-yellowrate" min="10" max="95" step="5" value="60" oninput="s3SliderChange()">
+      </div>
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-redrate">Red success rate</label>
+          <span class="s3-val" id="s3-redrate-val">60%</span>
+        </div>
+        <input type="range" id="s3-redrate" min="10" max="95" step="5" value="60" oninput="s3SliderChange()">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-bottom:10px;">
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-threshold">Mastery threshold (consecutive correct)</label>
+          <span class="s3-val" id="s3-threshold-val">2</span>
+        </div>
+        <input type="range" id="s3-threshold" min="1" max="3" step="1" value="2" oninput="s3SliderChange()">
+      </div>
+      <div class="s3-slider-group">
+        <div class="s3-slider-header">
+          <label class="ctrl-label" for="s3-include-all">Include checks &amp; black ✕s</label>
+          <span class="s3-val" id="s3-include-all-val">Off</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="s3-include-all" onchange="s3ToggleChange()">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+    <div class="s3-pool-info" id="s3-pool-info">Pool: 50 new &middot; 30 mastered &middot; 20 out-of-reach</div>
+  </div>
+  <div class="controls">
+    <button class="btn btn-start" id="s3-start" onclick="s3Start()">Start</button>
+    <button class="btn btn-pause" id="s3-pause" onclick="s3Pause()" disabled>Pause</button>
+    <button class="btn btn-reset" onclick="s3Reset()">Reset</button>
+    <div class="control-group">
+      <span class="ctrl-label">Speed (ms/turn)</span>
+      <input type="number" id="s3-tick" value="80" min="10" max="2000">
+    </div>
+  </div>
+  <div class="goal-wrap">
+    <div class="goal-header">
+      <span>New Questions Mastered</span>
+      <span><span id="s3-check-n">0</span> / <span id="s3-goal">50</span></span>
+    </div>
+    <div class="goal-track"><div class="goal-fill" id="s3-fill" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <span class="stat"><span class="stat-lbl" style="font-weight:700">Turns:</span>&nbsp;<span class="stat-val" id="s3-turns">0</span></span>
+    <span class="stat"><span class="stat-lbl">Success:</span>&nbsp;<span class="stat-val" id="s3-rate">—</span></span>
+    <span class="stat-div"></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f0f0f0;border-color:#ccc"></span><span class="stat-val" id="s3-empty">50</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#fde047;border-color:#ca8a04"></span><span class="stat-val" id="s3-yellow">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f87171;border-color:#b91c1c"></span><span class="stat-val" id="s3-red">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d"></span><span class="stat-val" id="s3-green">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center">✓</span><span class="stat-val" id="s3-check">30</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#374151;border-color:#111827"></span><span class="stat-val" id="s3-black">20</span></span>
+  </div>
+  <div class="victory" id="s3-victory"></div>
+  <div class="dot-grid-10col" id="s3-grid"></div>
+</div>
+
+<h2>Questions</h2>
+<p>First, this is just a model. It's surprisingly hard to find <strong>any</strong> models of how improvement happens, especially ones that are interactive. There are theories and terms (interleaving, retrieval, etc), but no sense of how these ideas operate in real life and what the tradeoffs are. My intent is to start building bridges between theory and practice.</p>
+<div class="qa">
+  <p><strong>Why those percentages for those colors?</strong></p>
+  <ul class="assumptions">
+    <li>70% is roughly the average percent correct on Mathchops, which also finds questions at a student's demonstrated ability level.</li>
+    <li>60% is roughly the average percent correct my students have achieved on "redos" of missed questions on practice tests.</li>
+    <li>100% is a bit optimistic for mastery, but if a student gets a question right twice in a row, she is very likely to get it right in the future.</li>
+    <li>0% is too pessimistic (especially if you can guess via multiple choice), but for most students, there are questions that are impossible to get with their current skill set.</li>
+  </ul>
+</div>
+
+<div class="qa">
+  <p><strong>Why are you selecting randomly? Why not by category?</strong> I will explore this in a future simulation, but I have found it very difficult to select questions accurately by category when there are so many different and inter-related skills. My approach might be different in a smaller domain in which certain skills were clearly dependent on others. In broader, messier pools, it's very easy to waste time on questions that are too easy or hard simply because they fall in your pre-determined category.</p>
+</div>
+
+<div class="qa">
+  <p><strong>But aren't some skills more or less related to others, which would drive up the probability of answering a question based on a similar skill correctly?</strong> This is my intuition also, but in practice, it is very difficult to find and model these relationships. Also, I didn't want this model to become too complicated (at least for now).</p>
+</div>
+
+<div class="qa">
+  <p><strong>Don't tests select from a pool of skills, rather than from the same small pool every time?</strong> Yes. I will attempt to simulate this in the future.</p>
+</div>
+
+<div class="qa">
+  <p><strong>What is the "size" of each skill?</strong> It's roughly "something a student could pick up in under five minutes through practice and instruction." For a student who understands fractions and ratios, that might be the skill of solving basic percent questions. For a student who is comfortable with the equations of parabolas and circles, that might be graphing basic ellipses.</p>
+</div>
+
+<div class="qa">
+  <p><strong>Isn't your targeted practice scenario unrealistic? It's impossible to find a practice set without mastered or out-of-reach items while retaining high-value items.</strong> Yes, this is a fair critique. Students always have some small chance of getting an easy question wrong or a hard question right. Also, even the 50 questions we're targeting would be related in some way to skills the student has mastered to some degree. They aren't completely new. However, this is mostly a demonstration of the type of practice we should aspire to.</p>
+</div>
+<div class="qa">
+  <p><strong>What about other important factors, like staying motivated over time and managing stress during a test?</strong> I'd like to model these in the future. They definitely play a role. But I wanted to keep the model simple, and I do think that skill mastery is the best predictor of performance.</p>
+</div>
+
+</article>
+
+<script>
+  const EMPTY='empty', YELLOW='yellow', RED='red', GREEN='green', CHECK='check', BLACK='black';
+  const NEAR='near';
+
+  // Fixed success rates per article description
+  const RATE = {
+    [EMPTY]:  0.70,
+    [YELLOW]: 0.60,
+    [RED]:    0.60,
+    [GREEN]:  0.80,
+    [CHECK]:  1.00,
+    [BLACK]:  0.00,
+  };
+
+  function transition(state, success) {
+    if (state === CHECK || state === BLACK) return state;
+    if (success) {
+      if (state === RED)    return YELLOW;
+      if (state === EMPTY)  return GREEN;
+      if (state === YELLOW) return GREEN;
+      if (state === GREEN)  return CHECK;
+    } else {
+      if (state === EMPTY)  return YELLOW;
+      if (state === YELLOW) return RED;
+      if (state === RED)    return RED;
+      if (state === GREEN)  return YELLOW;
+    }
+    return state;
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Creates an independent simulation instance.
+  // cfg fields:
+  //   prefix, tickId, gridId, victoryId, startId, pauseId
+  //   buildQuestions()  → initial state array
+  //   isEligible(state) → bool
+  //   checkVictory(qs)  → bool
+  //   victoryText(turns)→ string
+  //   onUpdate(qs, turns, successes)
+  function makeSim(cfg) {
+    let qs = [], turns = 0, successes = 0;
+    let timer = null, lastIdx = -1, done = false;
+
+    function getTick() {
+      return Math.max(10, parseInt(document.getElementById(cfg.tickId).value) || 80);
+    }
+
+    function init() {
+      qs = cfg.buildQuestions();
+      turns = 0; successes = 0; lastIdx = -1; done = false;
+      const grid = document.getElementById(cfg.gridId);
+      grid.innerHTML = '';
+      qs.forEach((state, i) => {
+        const el = document.createElement('div');
+        el.className = 'dot';
+        el.id = `${cfg.prefix}-${i}`;
+        el.dataset.state = state;
+        if (state === CHECK) el.textContent = '✓';
+        if (state === BLACK) el.textContent = '✕';
+        grid.appendChild(el);
+      });
+      document.getElementById(cfg.victoryId).classList.remove('show');
+      cfg.onUpdate(qs, turns, successes);
+    }
+
+    function tick() {
+      if (done) return;
+      const pool = qs.reduce((a, s, i) => { if (cfg.isEligible(s)) a.push(i); return a; }, []);
+      if (pool.length === 0) { stop(); return; }
+
+      const idx = pool[Math.floor(Math.random() * pool.length)];
+      const state = qs[idx];
+      const success = Math.random() < RATE[state];
+      const next = transition(state, success);
+      qs[idx] = next;
+      turns++;
+      if (success) successes++;
+
+      const el = document.getElementById(`${cfg.prefix}-${idx}`);
+      el.dataset.state = next;
+      el.textContent = next === CHECK ? '✓' : next === BLACK ? '✕' : '';
+
+      if (lastIdx >= 0) {
+        const prev = document.getElementById(`${cfg.prefix}-${lastIdx}`);
+        if (prev) prev.classList.remove('active');
+      }
+      el.classList.remove('active');
+      void el.offsetWidth;
+      el.classList.add('active');
+      lastIdx = idx;
+
+      cfg.onUpdate(qs, turns, successes);
+
+      if (cfg.checkVictory(qs)) {
+        done = true;
+        clearInterval(timer); timer = null;
+        document.getElementById(cfg.startId).disabled = false;
+        document.getElementById(cfg.pauseId).disabled = true;
+        const banner = document.getElementById(cfg.victoryId);
+        banner.textContent = cfg.victoryText(turns);
+        banner.classList.add('show');
+      }
+    }
+
+    function stop() {
+      clearInterval(timer); timer = null;
+      document.getElementById(cfg.startId).disabled = false;
+      document.getElementById(cfg.pauseId).disabled = true;
+    }
+
+    function start() {
+      if (timer || done) return;
+      timer = setInterval(tick, getTick());
+      document.getElementById(cfg.startId).disabled = true;
+      document.getElementById(cfg.pauseId).disabled = false;
+    }
+
+    function pause() {
+      stop();
+    }
+
+    function reset() {
+      stop();
+      init();
+    }
+
+    init();
+    return { start, pause, reset };
+  }
+
+  // ─── Sim 1: Targeted Practice ─────────────────────────────
+  const s1 = makeSim({
+    prefix: 's1', tickId: 's1-tick', gridId: 's1-grid',
+    victoryId: 's1-victory', startId: 's1-start', pauseId: 's1-pause',
+
+    buildQuestions: () => Array(50).fill(EMPTY),
+    isEligible: s => s !== CHECK,
+    checkVictory: qs => qs.every(s => s === CHECK),
+    victoryText: n => `All 50 questions mastered in ${n} turns!`,
+
+    onUpdate(qs, turns, successes) {
+      const c = { [EMPTY]:0, [YELLOW]:0, [RED]:0, [GREEN]:0, [CHECK]:0 };
+      qs.forEach(s => c[s]++);
+      document.getElementById('s1-turns').textContent = turns;
+      document.getElementById('s1-rate').textContent  = turns > 0 ? (successes/turns*100).toFixed(1)+'%' : '—';
+      document.getElementById('s1-empty').textContent  = c[EMPTY];
+      document.getElementById('s1-yellow').textContent = c[YELLOW];
+      document.getElementById('s1-red').textContent    = c[RED];
+      document.getElementById('s1-green').textContent  = c[GREEN];
+      document.getElementById('s1-check').textContent  = c[CHECK];
+      document.getElementById('s1-check-n').textContent = c[CHECK];
+      document.getElementById('s1-fill').style.width   = (c[CHECK] / 50 * 100) + '%';
+    }
+  });
+
+  // ─── Monte Carlo runner ───────────────────────────────────
+  function runTrial(buildQuestions, isEligible, checkVictory) {
+    const qs = buildQuestions();
+    let turns = 0;
+    while (!checkVictory(qs)) {
+      const pool = [];
+      for (let i = 0; i < qs.length; i++) { if (isEligible(qs[i])) pool.push(i); }
+      if (pool.length === 0) break;
+      const idx = pool[Math.floor(Math.random() * pool.length)];
+      qs[idx] = transition(qs[idx], Math.random() < RATE[qs[idx]]);
+      if (++turns > 500000) break;
+    }
+    return turns;
+  }
+
+  function trialStats(samples) {
+    const sorted = [...samples].sort((a, b) => a - b);
+    const mean = Math.round(samples.reduce((a, b) => a + b, 0) / samples.length);
+    const mid = Math.floor(sorted.length / 2);
+    const median = sorted.length % 2 === 0
+      ? Math.round((sorted[mid - 1] + sorted[mid]) / 2)
+      : sorted[mid];
+    return { mean, median, min: sorted[0], max: sorted[sorted.length - 1] };
+  }
+
+  function runTrials() {
+    const btn = document.getElementById('trials-btn');
+    btn.disabled = true;
+    btn.textContent = 'Running…';
+    setTimeout(() => {
+      const N = 100;
+      const s1Samples = Array.from({length: N}, () => runTrial(
+        () => Array(50).fill(EMPTY),
+        s => s !== CHECK,
+        qs => qs.every(s => s === CHECK)
+      ));
+      const buildS2 = () => {
+        const left  = shuffle([...Array(S2_INITIAL_CHECKS).fill(CHECK), ...Array(20).fill(EMPTY)]);
+        const right = shuffle([...Array(20).fill(BLACK), ...Array(30).fill(EMPTY)]);
+        const qs = Array(100);
+        for (let row = 0; row < 10; row++) {
+          for (let col = 0; col < 5; col++) qs[row * 10 + col] = left[row * 5 + col];
+          for (let col = 5; col < 10; col++) qs[row * 10 + col] = right[row * 5 + (col - 5)];
+        }
+        return qs;
+      };
+      const s2Samples = Array.from({length: N}, () => runTrial(
+        buildS2,
+        () => true,
+        qs => qs.filter(s => s === CHECK).length >= S2_INITIAL_CHECKS + 50
+      ));
+      const s1Stats = trialStats(s1Samples);
+      const s2Stats = trialStats(s2Samples);
+      ['mean', 'median', 'min', 'max'].forEach(key => {
+        document.getElementById(`t1-${key}`).textContent = s1Stats[key].toLocaleString();
+        document.getElementById(`t2-${key}`).textContent = s2Stats[key].toLocaleString();
+      });
+      document.getElementById('trials-results').style.display = '';
+      btn.textContent = 'Run 100 Trials Again';
+      btn.disabled = false;
+    }, 20);
+  }
+
+  // ─── Sim 2: Test After Test ────────────────────────────────
+  // Fixed composition: 20 black + 30 check + 50 empty = 100 total
+  const S2_INITIAL_CHECKS = 30;
+
+  const s2 = makeSim({
+    prefix: 's2', tickId: 's2-tick', gridId: 's2-grid',
+    victoryId: 's2-victory', startId: 's2-start', pauseId: 's2-pause',
+
+    buildQuestions: () => {
+      // 10-col grid: left 5 cols = check+empty, right 5 cols = black+empty
+      const left  = shuffle([...Array(S2_INITIAL_CHECKS).fill(CHECK), ...Array(20).fill(EMPTY)]);
+      const right = shuffle([...Array(20).fill(BLACK), ...Array(30).fill(EMPTY)]);
+      const qs = Array(100);
+      for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 5; col++) qs[row * 10 + col] = left[row * 5 + col];
+        for (let col = 5; col < 10; col++) qs[row * 10 + col] = right[row * 5 + (col - 5)];
+      }
+      return qs;
+    },
+    isEligible: () => true,
+    checkVictory: qs => qs.filter(s => s === CHECK).length >= S2_INITIAL_CHECKS + 50,
+    victoryText: n => `All 50 learnable questions mastered in ${n} turns!`,
+
+    onUpdate(qs, turns, successes) {
+      const c = { [EMPTY]:0, [YELLOW]:0, [RED]:0, [GREEN]:0, [CHECK]:0, [BLACK]:0 };
+      qs.forEach(s => c[s]++);
+      const newMastered = Math.max(0, c[CHECK] - S2_INITIAL_CHECKS);
+      document.getElementById('s2-turns').textContent  = turns;
+      document.getElementById('s2-rate').textContent   = turns > 0 ? (successes/turns*100).toFixed(1)+'%' : '—';
+      document.getElementById('s2-empty').textContent  = c[EMPTY];
+      document.getElementById('s2-yellow').textContent = c[YELLOW];
+      document.getElementById('s2-red').textContent    = c[RED];
+      document.getElementById('s2-green').textContent  = c[GREEN];
+      document.getElementById('s2-check').textContent  = c[CHECK];
+      document.getElementById('s2-black').textContent  = c[BLACK];
+      document.getElementById('s2-check-n').textContent = newMastered;
+      document.getElementById('s2-fill').style.width   = (newMastered / 50 * 100) + '%';
+    }
+  });
+
+  // ─── Sim 3: Sensitivity Explorer ──────────────────────────
+  let s3qs = [], s3turns = 0, s3successes = 0, s3done = false;
+  let s3timer = null, s3lastIdx = -1;
+  let s3threshold = 2, s3NewRate = 70, s3GreenRate = 80, s3YellowRate = 60, s3RedRate = 60;
+  let s3nCheck = 30, s3nBlack = 20, s3nEmpty = 50;
+
+  function s3p(id) { return document.getElementById(id); }
+
+  function s3State(q) {
+    if (q.black) return BLACK;
+    if (q.initCheck || q.streak >= s3threshold) return CHECK;
+    if (s3threshold >= 3 && q.streak >= 2) return NEAR;
+    if (q.streak >= 1) return GREEN;
+    if (q.wrong >= 2) return RED;
+    if (q.wrong >= 1) return YELLOW;
+    return EMPTY;
+  }
+
+  function s3Rate(q) {
+    if (q.black) return 0;
+    if (q.initCheck || q.streak >= s3threshold) return 1.0;
+    const st = s3State(q);
+    if (st === GREEN || st === NEAR) return s3GreenRate / 100;
+    if (st === YELLOW) return s3YellowRate / 100;
+    if (st === RED)    return s3RedRate / 100;
+    return s3NewRate / 100;
+  }
+
+  function s3Apply(q, success) {
+    if (q.black || q.initCheck || q.streak >= s3threshold) return q;
+    if (success) {
+      if (q.wrong >= 2) return Object.assign({}, q, { streak: 0, wrong: 1 });
+      return Object.assign({}, q, { streak: q.streak + 1, wrong: 0 });
+    }
+    return Object.assign({}, q, { streak: 0, wrong: q.wrong + 1 });
+  }
+
+  function s3MasteredCount() {
+    return s3qs.filter(q => !q.black && !q.initCheck && q.streak >= s3threshold).length;
+  }
+
+  function s3UpdateStats() {
+    const c = { [EMPTY]:0, [YELLOW]:0, [RED]:0, [GREEN]:0, [CHECK]:0, [BLACK]:0, [NEAR]:0 };
+    s3qs.forEach(q => { const st = s3State(q); c[st] = (c[st] || 0) + 1; });
+    const newMastered = s3MasteredCount();
+    s3p('s3-turns').textContent  = s3turns;
+    s3p('s3-rate').textContent   = s3turns > 0 ? (s3successes / s3turns * 100).toFixed(1) + '%' : '—';
+    s3p('s3-empty').textContent  = c[EMPTY];
+    s3p('s3-yellow').textContent = c[YELLOW];
+    s3p('s3-red').textContent    = c[RED];
+    s3p('s3-green').textContent  = (c[GREEN] || 0) + (c[NEAR] || 0);
+    s3p('s3-check').textContent  = c[CHECK];
+    s3p('s3-black').textContent  = c[BLACK];
+    s3p('s3-check-n').textContent = newMastered;
+    s3p('s3-fill').style.width = s3nEmpty > 0 ? (newMastered / s3nEmpty * 100) + '%' : '0%';
+  }
+
+  function s3Init() {
+    s3nCheck = Math.round(parseInt(s3p('s3-pcheck').value));
+    const pBlack = parseInt(s3p('s3-pblack').value);
+    s3nBlack = Math.min(Math.round(pBlack), 100 - s3nCheck);
+    s3nEmpty = 100 - s3nCheck - s3nBlack;
+    s3threshold = parseInt(s3p('s3-threshold').value);
+    s3NewRate    = parseInt(s3p('s3-newrate').value);
+    s3GreenRate  = parseInt(s3p('s3-greenrate').value);
+    s3YellowRate = parseInt(s3p('s3-yellowrate').value);
+    s3RedRate    = parseInt(s3p('s3-redrate').value);
+
+    const arr = [
+      ...Array(s3nCheck).fill(null).map(() => ({ streak: 999, wrong: 0, black: false, initCheck: true })),
+      ...Array(s3nBlack).fill(null).map(() => ({ streak: 0, wrong: 0, black: true, initCheck: false })),
+      ...Array(s3nEmpty).fill(null).map(() => ({ streak: 0, wrong: 0, black: false, initCheck: false })),
+    ];
+    s3qs = shuffle(arr);
+    s3turns = 0; s3successes = 0; s3lastIdx = -1; s3done = false;
+
+    s3p('s3-goal').textContent = s3nEmpty;
+    s3p('s3-pool-info').textContent = `Pool: ${s3nEmpty} new \u00b7 ${s3nCheck} mastered \u00b7 ${s3nBlack} out-of-reach`;
+
+    const grid = s3p('s3-grid');
+    grid.innerHTML = '';
+    s3qs.forEach((q, i) => {
+      const el = document.createElement('div');
+      el.className = 'dot';
+      el.id = `s3-${i}`;
+      const st = s3State(q);
+      el.dataset.state = st;
+      if (st === CHECK) el.textContent = '\u2713';
+      if (st === BLACK) el.textContent = '\u2715';
+      if (st === NEAR)  el.textContent = '\u00b7';
+      grid.appendChild(el);
+    });
+    s3p('s3-victory').classList.remove('show');
+    s3UpdateStats();
+  }
+
+  function s3StopTimer() {
+    clearInterval(s3timer); s3timer = null;
+    s3p('s3-start').disabled = false;
+    s3p('s3-pause').disabled = true;
+  }
+
+  function s3Tick() {
+    if (s3done) return;
+    const includeAll = s3p('s3-include-all').checked;
+    const pool = s3qs.reduce((a, q, i) => {
+      if (includeAll || (!q.black && !q.initCheck && q.streak < s3threshold)) a.push(i);
+      return a;
+    }, []);
+    if (pool.length === 0) { s3StopTimer(); return; }
+
+    const idx = pool[Math.floor(Math.random() * pool.length)];
+    const q = s3qs[idx];
+    const success = Math.random() < s3Rate(q);
+    s3qs[idx] = s3Apply(q, success);
+    s3turns++;
+    if (success) s3successes++;
+
+    const newQ = s3qs[idx];
+    const newSt = s3State(newQ);
+    const el = s3p(`s3-${idx}`);
+    el.dataset.state = newSt;
+    el.textContent = newSt === CHECK ? '\u2713' : newSt === NEAR ? '\u00b7' : '';
+
+    if (s3lastIdx >= 0) {
+      const prev = s3p(`s3-${s3lastIdx}`);
+      if (prev) prev.classList.remove('active');
+    }
+    el.classList.remove('active');
+    void el.offsetWidth;
+    el.classList.add('active');
+    s3lastIdx = idx;
+
+    s3UpdateStats();
+
+    if (s3nEmpty > 0 && s3MasteredCount() >= s3nEmpty) {
+      s3done = true;
+      s3StopTimer();
+      const banner = s3p('s3-victory');
+      banner.textContent = `All ${s3nEmpty} learnable questions mastered in ${s3turns} turns!`;
+      banner.classList.add('show');
+    }
+  }
+
+  function s3Start() {
+    if (s3timer || s3done) return;
+    s3threshold = parseInt(s3p('s3-threshold').value);
+    s3NewRate    = parseInt(s3p('s3-newrate').value);
+    s3GreenRate  = parseInt(s3p('s3-greenrate').value);
+    s3YellowRate = parseInt(s3p('s3-yellowrate').value);
+    s3RedRate    = parseInt(s3p('s3-redrate').value);
+    const tick = Math.max(10, parseInt(s3p('s3-tick').value) || 80);
+    s3timer = setInterval(s3Tick, tick);
+    s3p('s3-start').disabled = true;
+    s3p('s3-pause').disabled = false;
+  }
+
+  function s3ToggleChange() {
+    s3p('s3-include-all-val').textContent = s3p('s3-include-all').checked ? 'On' : 'Off';
+  }
+
+  function s3Pause() { s3StopTimer(); }
+
+  function s3Reset() {
+    s3StopTimer();
+    s3Init();
+  }
+
+  function s3SliderChange() {
+    s3p('s3-pcheck-val').textContent    = s3p('s3-pcheck').value + '%';
+    s3p('s3-pblack-val').textContent    = s3p('s3-pblack').value + '%';
+    s3p('s3-newrate-val').textContent    = s3p('s3-newrate').value + '%';
+    s3p('s3-greenrate-val').textContent  = s3p('s3-greenrate').value + '%';
+    s3p('s3-yellowrate-val').textContent = s3p('s3-yellowrate').value + '%';
+    s3p('s3-redrate-val').textContent    = s3p('s3-redrate').value + '%';
+    s3p('s3-threshold-val').textContent  = s3p('s3-threshold').value;
+    // Rate/threshold take effect immediately
+    s3threshold  = parseInt(s3p('s3-threshold').value);
+    s3NewRate    = parseInt(s3p('s3-newrate').value);
+    s3GreenRate  = parseInt(s3p('s3-greenrate').value);
+    s3YellowRate = parseInt(s3p('s3-yellowrate').value);
+    s3RedRate    = parseInt(s3p('s3-redrate').value);
+    // Update pool preview
+    const nC = parseInt(s3p('s3-pcheck').value);
+    const nB = Math.min(parseInt(s3p('s3-pblack').value), 100 - nC);
+    const nE = 100 - nC - nB;
+    s3p('s3-pool-info').textContent = `Pool: ${nE} new \u00b7 ${nC} mastered \u00b7 ${nB} out-of-reach (composition applies on Reset)`;
+  }
+
+  s3Init();
+</script>
+</body>
+</html>
