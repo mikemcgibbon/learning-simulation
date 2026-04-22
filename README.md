@@ -1,0 +1,1 @@
+I'm trying to build a bridge between theory and practice. It's surprisingly hard to find models of how improvement happens, especially ones that are interactive. There are theories and terms (interleaving, retrieval, etc), but no sense of how these ideas operate in real life and what the tradeoffs are.
