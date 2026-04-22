@@ -174,6 +174,22 @@
       transition: width 0.12s; min-width: 0;
     }
 
+    /* Dot scale */
+    .dot-scale { margin: 14px 0 22px; }
+    .dot-scale-row {
+      display: grid;
+      grid-template-columns: 100px repeat(6, 1fr);
+      align-items: center;
+      margin-bottom: 5px;
+      font-family: system-ui, sans-serif;
+    }
+    .dot-scale-lbl {
+      font-size: 0.72rem; font-weight: 600; color: #999;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .dot-scale-col { display: flex; justify-content: center; align-items: center; }
+    .dot-scale-num, .dot-scale-pct { font-size: 0.78rem; font-weight: 700; color: #555; }
+
     /* Assumptions Q&A */
     .qa { margin-bottom: 18px; }
     .qa strong { font-style: italic; }
@@ -309,51 +325,41 @@
 
 <p>The probability of success varies depending on the skill's history:</p>
 
-<table class="color-table">
-  <thead>
-    <tr>
-      <th>Colors</th>
-      <th></th>
-      <th>Success Rate</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><div class="legend-dot" style="background:#f0f0f0;border-color:#ccc"></div></td>
-      <td>Has never been tested</td>
-      <td>70%</td>
-    </tr>
-    <tr>
-      <td><div class="legend-dot" style="background:#fde047;border-color:#ca8a04"></div></td>
-      <td>Was incorrect (or red) the previous attempt</td>
-      <td>60%</td>
-    </tr>
-    <tr>
-      <td><div class="legend-dot" style="background:#f87171;border-color:#b91c1c"></div></td>
-      <td>Was incorrect the previous 2+ attempts</td>
-      <td>60%</td>
-    </tr>
-    <tr>
-      <td><div class="legend-dot" style="background:#4ade80;border-color:#15803d"></div></td>
-      <td>Was correct the previous attempt</td>
-      <td>80%</td>
-    </tr>
-    <tr>
-      <td><div class="legend-dot" style="background:#4ade80;border-color:#15803d">✓</div></td>
-      <td>Was correct the previous two attempts</td>
-      <td>100%</td>
-    </tr>
-    <tr>
-      <td><div class="legend-dot" style="background:#374151;border-color:#111827;color:#9ca3af">✕</div></td>
-      <td>Too difficult at this time.</td>
-      <td>0%</td>
-    </tr>
-  </tbody>
-</table>
+<div class="dot-scale">
+  <div class="dot-scale-row">
+    <span class="dot-scale-lbl">Running Total</span>
+    <div class="dot-scale-col"><span class="dot-scale-num">N/A</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-num">−2</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-num">−1</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-num">0</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-num">+1</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-num">+2</span></div>
+  </div>
+  <div class="dot-scale-row">
+    <span class="dot-scale-lbl"></span>
+    <div class="dot-scale-col"><div class="dot" data-state="black">✕</div></div>
+    <div class="dot-scale-col"><div class="dot" data-state="red"></div></div>
+    <div class="dot-scale-col"><div class="dot" data-state="yellow"></div></div>
+    <div class="dot-scale-col"><div class="dot" data-state="empty"></div></div>
+    <div class="dot-scale-col"><div class="dot" data-state="green"></div></div>
+    <div class="dot-scale-col"><div class="dot" data-state="check">✓</div></div>
+  </div>
+  <div class="dot-scale-row">
+    <span class="dot-scale-lbl">Success Rate</span>
+    <div class="dot-scale-col"><span class="dot-scale-pct">0%</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-pct">60%</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-pct">60%</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-pct">70%</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-pct">80%</span></div>
+    <div class="dot-scale-col"><span class="dot-scale-pct">100%</span></div>
+  </div>
+</div>
+
+<p>For example, if a circle's turns are unsuccessful twice in a row (-2), followed by a successful turn (+1), the running total is -1 (yellow). That means it will have a 60% chance of success on its next turn.</p>
 
 <p>The first simulation represents targeted practice. The pool contains no mastered or too-hard questions at the start of the simulation. But most students prefer to take practice tests. These have a mix of questions, some of which have already been mastered, some of which are currently out of reach.</p>
 
-<p>In the second simlution, the goal is still to master 50 questions, but this time the student is not specifically targeting the not-mastered, not-out-of-reach questions. Questions are selected randomly from the full pool, just as they are in a practice test. This particular student begins with 30 green checks and 20 black circles.</p>
+<p>In the second simlution, the goal is still to master 50 questions, but this time the student is not specifically targeting the not-mastered, not-out-of-reach questions. Questions are selected randomly from the full pool, just as they are in a practice test. This particular student begins with 30 green checks (mastered) and 20 black circles (too hard).</p>
 
 <!-- ═══ SIM 2 ═══ -->
 <div class="sim-block">
