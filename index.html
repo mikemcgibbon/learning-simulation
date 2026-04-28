@@ -275,6 +275,17 @@
       100% { transform: scale(1); }
     }
     .dot.active { animation: pulse 0.18s ease; }
+
+    /* Single-circle sim */
+    .sim-one-grid {
+      display: flex;
+      justify-content: center;
+      padding: 14px 0 8px;
+    }
+    .sim-one-grid .dot {
+      width: 64px; height: 64px;
+      font-size: 1.15rem;
+    }
   </style>
 </head>
 <body>
@@ -283,42 +294,11 @@
 <h1>Visualizing Two Practice Strategies</h1>
 <p style="font-size:0.85rem;color:#888;margin-bottom:28px;font-family:system-ui,sans-serif;">By Mike McGibbon, written 4.22.2026</p>
 
-<p>We know that scores go up when students acquire important skills. But what is the optimal practice strategy? I've created two simulations, each representing a common approach to skill acquisition. In both, the goal is to "learn" 50 new questions.</p>
-<p>Each <strong>circle</strong> represents a skill in a diverse pool, similar to what students encounter in tests like the SAT. Each <strong>turn</strong> represents an attempt to answer a question related to that skill. The probability of success is based on the color of the circle at that time, starting at 70% for new questions.</p>
-<!-- ═══ SIM 1 ═══ -->
-<div class="sim-block">
-  <div class="sim-label">Simulation 1 — Targeted Practice</div>
-  <div class="controls">
-    <div class="control-group">
-      <span class="ctrl-label">Speed (ms/turn)</span>
-      <input type="number" id="s1-tick" value="80" min="10" max="2000">
-    </div>
-    <button class="btn btn-start" id="s1-start" onclick="s1.start()">Start</button>
-    <button class="btn btn-pause" id="s1-pause" onclick="s1.pause()" disabled>Pause</button>
-    <button class="btn btn-reset" onclick="s1.reset()">Reset</button>
-  </div>
-  <div class="goal-wrap">
-    <div class="goal-header">
-      <span>Questions mastered</span>
-      <span><span id="s1-check-n">0</span> / 50</span>
-    </div>
-    <div class="goal-track"><div class="goal-fill" id="s1-fill" style="width:0%"></div></div>
-  </div>
-  <div class="stats">
-    <span class="stat"><span class="stat-lbl" style="font-weight:700">Turns:</span>&nbsp;<span class="stat-val" id="s1-turns">0</span></span>
-    <span class="stat"><span class="stat-lbl">Success:</span>&nbsp;<span class="stat-val" id="s1-rate">—</span></span>
-    <span class="stat-div"></span>
-    <span class="stat"><span class="stat-swatch" style="background:#f0f0f0;border-color:#ccc"></span><span class="stat-val" id="s1-empty">50</span></span>
-    <span class="stat"><span class="stat-swatch" style="background:#fde047;border-color:#ca8a04"></span><span class="stat-val" id="s1-yellow">0</span></span>
-    <span class="stat"><span class="stat-swatch" style="background:#f87171;border-color:#b91c1c"></span><span class="stat-val" id="s1-red">0</span></span>
-    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d"></span><span class="stat-val" id="s1-green">0</span></span>
-    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center">✓</span><span class="stat-val" id="s1-check">0</span></span>
-  </div>
-  <div class="victory" id="s1-victory"></div>
-  <div class="dot-grid" id="s1-grid"></div>
-</div>
+<p>We know that scores go up when students acquire important skills. But what is the optimal practice strategy? And how can we visualize their skill acquisition over time?</p>
+<h2>The Models and their elements</h2>
+<p>I've created toy models that simulate a student's learning state over time. Each <strong>circle</strong> represents a skill in a diverse pool, similar to what students encounter in tests like the SAT. Each <strong>turn</strong> represents an attempt to answer a question related to that skill, followed by review.</p>
 
-<p>The probability of success varies depending on the skill's history:</p>
+<p>The probability of success varies depending on the circle's history:</p>
 
 <div class="dot-scale">
   <div class="dot-scale-row">
@@ -350,15 +330,35 @@
   </div>
 </div>
 
-<p>For example, if a circle's turns are unsuccessful twice in a row (-2), followed by a successful turn (+1), the running total is -1 (yellow). That means it will have a 60% chance of success on its next turn.</p>
+<p>For example, if a circle's turns are unsuccessful twice in a row (-2), followed by a successful turn (+1), the running total is -1 (yellow). That means it will have a 60% chance of success on its next turn. Play this simluation a few times to get a sense for how the circles change over time.</p>
 
-<p>The first simulation represents targeted practice. The pool contains no mastered or too-hard questions at the start of the simulation. But most students prefer to take practice tests. These have a mix of questions, some of which have already been mastered, some of which are currently out of reach.</p>
-
-<p>In the second simlution, the goal is still to master 50 questions, but this time the student is not specifically targeting the not-mastered, not-out-of-reach questions. Questions are selected randomly from the full pool, just as they are in a practice test. This particular student begins with 30 green checks (mastered) and 20 black circles (too hard).</p>
-
+<!-- ═══ SIM 0 — Mastering One Skill ═══ -->
+<div class="sim-block">
+  <div class="sim-label">Mastering One Skill</div>
+  <div class="controls">
+    <div class="control-group">
+      <span class="ctrl-label">Speed (ms/turn)</span>
+      <input type="number" id="s0-tick" value="800" min="10" max="2000">
+    </div>
+    <button class="btn btn-start" id="s0-start" onclick="s0.start()">Start</button>
+    <button class="btn btn-pause" id="s0-pause" onclick="s0.pause()" disabled>Pause</button>
+    <button class="btn btn-reset" onclick="s0.reset()">Reset</button>
+  </div>
+  <div class="stats">
+    <span class="stat"><span class="stat-lbl" style="font-weight:700">Turns:</span>&nbsp;<span class="stat-val" id="s0-turns">0</span></span>
+    <span class="stat-div"></span>
+    <span class="stat"><span class="stat-lbl">Running Total:</span>&nbsp;<span class="stat-val" id="s0-total">0</span></span>
+    <span class="stat"><span class="stat-lbl">Success Rate:</span>&nbsp;<span class="stat-val" id="s0-srate">70%</span></span>
+  </div>
+  <div class="victory" id="s0-victory"></div>
+  <div class="sim-one-grid" id="s0-grid"></div>
+</div>
+<h2>Scenario 1: Taking Test After Test</h2>
+<p>Students typically work on many skills at the same time, especially when preparing for standardized tests like the SAT. One strategy is to take lots and lots practice tests. This approach allows students to work on material that is, by definition, likely to appear on a real test, and it provides them with a score prediction.</p>
+<p>The downside is that many of the questions on the test are either already mastered or are currently out of reach. In this simulation, I've made 20 of the questions black (out of reach), 30 mastered (green with a check), and 50 gray (available to be mastered).</p>
 <!-- ═══ SIM 2 ═══ -->
 <div class="sim-block">
-  <div class="sim-label">Simulation 2 — Test After Test</div>
+  <div class="sim-label">Taking Test After Test</div>
   <div class="controls">
     <div class="control-group">
       <span class="ctrl-label">Speed (ms/turn)</span>
@@ -389,8 +389,43 @@
   <div class="victory" id="s2-victory"></div>
   <div class="dot-grid-10col" id="s2-grid"></div>
 </div>
+<p>It's painful for me to watch this one. Every pulsing green check and black ✕ is futile. Over time, it becomes harder and harder to find those questions that can still be converted. One forlorn green circle may wait for 80 turn, and that turn still might not be successful. Unfortunately, I have seen this happen to my own students. They answer lots of questions and review them carefully, but because so few of those questions target master-able skills, the scores barely move.</p>
+<h2>Scenario Two: Targeted Practice</h2>
+<p>This next simulation represents the ideal approach: targeted practice. The goal is still to master 50 questions, but this time the pool does not include any mastered or out-of-reach questions. And once a question is mastered, the student stops practicing it.</p>
+<!-- ═══ SIM 1 ═══ -->
+<div class="sim-block">
+  <div class="sim-label">Targeted Practice</div>
+  <div class="controls">
+    <div class="control-group">
+      <span class="ctrl-label">Speed (ms/turn)</span>
+      <input type="number" id="s1-tick" value="80" min="10" max="2000">
+    </div>
+    <button class="btn btn-start" id="s1-start" onclick="s1.start()">Start</button>
+    <button class="btn btn-pause" id="s1-pause" onclick="s1.pause()" disabled>Pause</button>
+    <button class="btn btn-reset" onclick="s1.reset()">Reset</button>
+  </div>
+  <div class="goal-wrap">
+    <div class="goal-header">
+      <span>Questions mastered</span>
+      <span><span id="s1-check-n">0</span> / 50</span>
+    </div>
+    <div class="goal-track"><div class="goal-fill" id="s1-fill" style="width:0%"></div></div>
+  </div>
+  <div class="stats">
+    <span class="stat"><span class="stat-lbl" style="font-weight:700">Turns:</span>&nbsp;<span class="stat-val" id="s1-turns">0</span></span>
+    <span class="stat"><span class="stat-lbl">Success:</span>&nbsp;<span class="stat-val" id="s1-rate">—</span></span>
+    <span class="stat-div"></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f0f0f0;border-color:#ccc"></span><span class="stat-val" id="s1-empty">50</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#fde047;border-color:#ca8a04"></span><span class="stat-val" id="s1-yellow">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#f87171;border-color:#b91c1c"></span><span class="stat-val" id="s1-red">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d"></span><span class="stat-val" id="s1-green">0</span></span>
+    <span class="stat"><span class="stat-swatch" style="background:#4ade80;border-color:#15803d;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center">✓</span><span class="stat-val" id="s1-check">0</span></span>
+  </div>
+  <div class="victory" id="s1-victory"></div>
+  <div class="dot-grid" id="s1-grid"></div>
+</div>
 
-<p>It's painful for me to watch this one. Every pulsing green check and black ✕ is futile. Over time, it becomes harder and harder to find those questions that can still be converted. One forlorn green circle may wait for 80 turns…and that turn still might not be successful. The process also appears to be highly variable: I've seen as many as 3,947 turns and as few as 772.</p>
+<p>The questions are mastered much more quickly. There is also much less variation from one "run" to the next. I've seen the "test after test" approach use as many as 3,947 turns and as few as 772. This Monte Carlo simulation lets you see this more quickly:</p>
 
 <div class="trials-block">
   <div class="sim-label">Monte Carlo — 100 Trials</div>
@@ -425,8 +460,8 @@
     </table>
   </div>
 </div>
-<p>I do think the second simulation reflects the approach of taking "test after test" approach very well. The student is answering more questions and is getting a higher percentage right (often ~75% vs ~65%)...but it doesn't matter, because so few of those questions are targeting skills that will actually affect their scores.</p>
-<p>Meanwhile, the first student is only targeting high-yield questions. There are no black questions, and the green-check questions are never answered. Over time, the practice pool becomes smaller, which speeds up the process.</p>
+<p>Of course, these are just models. In real life, the skills would be inter-related. No question would be totally out of reach forever. No question would stay mastered forever. Students have different motivation levels. I plan to explore these nuances in future simulations, but I think these toy models do a good job of representing the extremes of perfectly targeted practice and non-targeted general practice.</p>
+
 <h2>Exploration</h2>
 <p>Use the sliders below to explore how each variable affects the outcome. Pool composition changes (% mastered, % out-of-reach) take effect when you click Reset. Rate and threshold changes take effect immediately.</p>
 
@@ -531,7 +566,7 @@
 </div>
 
 <h2>Questions</h2>
-<p>First, this is just a model. It's surprisingly hard to find <strong>any</strong> models of how improvement happens, especially ones that are interactive. There are theories and terms (interleaving, retrieval, etc), but no sense of how these ideas operate in real life and what the tradeoffs are. My intent is to start building bridges between theory and practice.</p>
+<p>First, I know these models are not fully capturing reality. But it's surprisingly hard to find <strong>any</strong> models of how improvement happens, especially ones that are interactive. There are theories and terms (interleaving, retrieval, etc), but no sense of how these ideas operate in real life and what the tradeoffs are. I think it's really important to have ways to play around with these ideas, so that we can understand their implications more easily.</p>
 <div class="qa">
   <p><strong>Why those percentages for those colors?</strong></p>
   <ul class="assumptions">
@@ -711,6 +746,31 @@
     init();
     return { start, pause, reset };
   }
+
+  // ─── Sim 0: Mastering One Skill ───────────────────────────
+  const S0_TOTAL = { [EMPTY]: 0, [YELLOW]: -1, [RED]: -2, [GREEN]: 1, [CHECK]: 2 };
+  function s0RunningTotal(state) {
+    if (state === BLACK) return 'N/A';
+    const n = S0_TOTAL[state];
+    return n > 0 ? `+${n}` : `${n}`;
+  }
+
+  const s0 = makeSim({
+    prefix: 's0', tickId: 's0-tick', gridId: 's0-grid',
+    victoryId: 's0-victory', startId: 's0-start', pauseId: 's0-pause',
+
+    buildQuestions: () => [EMPTY],
+    isEligible: s => s !== CHECK,
+    checkVictory: qs => qs[0] === CHECK,
+    victoryText: n => `Skill mastered in ${n} turns!`,
+
+    onUpdate(qs, turns, successes) {
+      const state = qs[0];
+      document.getElementById('s0-turns').textContent = turns;
+      document.getElementById('s0-total').textContent = s0RunningTotal(state);
+      document.getElementById('s0-srate').textContent = Math.round(RATE[state] * 100) + '%';
+    }
+  });
 
   // ─── Sim 1: Targeted Practice ─────────────────────────────
   const s1 = makeSim({
